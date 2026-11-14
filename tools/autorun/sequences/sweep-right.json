@@ -1,0 +1,127 @@
+{
+ "device": "hand-right",
+ "idleHand": "rest",
+ "steps": [
+  {
+   "label": "to-start",
+   "anchor": "index-tip",
+   "position": {
+    "relativeTo": "body",
+    "x": -0.109,
+    "y": 0.74,
+    "z": -0.345
+   },
+   "duration": 0.6
+  },
+  {
+   "label": "hold-start",
+   "position": {
+    "relativeTo": "body",
+    "x": -0.109,
+    "y": 0.74,
+    "z": -0.345
+   },
+   "duration": 1.2
+  },
+  {
+   "label": "sweep-1",
+   "position": {
+    "relativeTo": "body",
+    "x": -0.045,
+    "y": 0.74,
+    "z": -0.39
+   },
+   "duration": 0.35
+  },
+  {
+   "label": "sweep-2",
+   "position": {
+    "relativeTo": "body",
+    "x": 0.026,
+    "y": 0.74,
+    "z": -0.423
+   },
+   "duration": 0.35
+  },
+  {
+   "label": "sweep-3",
+   "position": {
+    "relativeTo": "body",
+    "x": 0.102,
+    "y": 0.74,
+    "z": -0.443
+   },
+   "duration": 0.35
+  },
+  {
+   "label": "sweep-4",
+   "position": {
+    "relativeTo": "body",
+    "x": 0.18,
+    "y": 0.74,
+    "z": -0.45
+   },
+   "duration": 0.35
+  },
+  {
+   "label": "sweep-5",
+   "position": {
+    "relativeTo": "body",
+    "x": 0.258,
+    "y": 0.74,
+    "z": -0.443
+   },
+   "duration": 0.35
+  },
+  {
+   "label": "sweep-6",
+   "position": {
+    "relativeTo": "body",
+    "x": 0.334,
+    "y": 0.74,
+    "z": -0.423
+   },
+   "duration": 0.35
+  },
+  {
+   "label": "sweep-7",
+   "position": {
+    "relativeTo": "body",
+    "x": 0.405,
+    "y": 0.74,
+    "z": -0.39
+   },
+   "duration": 0.35
+  },
+  {
+   "label": "sweep-8",
+   "position": {
+    "relativeTo": "body",
+    "x": 0.469,
+    "y": 0.74,
+    "z": -0.345
+   },
+   "duration": 0.35
+  },
+  {
+   "label": "rest-end",
+   "position": {
+    "relativeTo": "body",
+    "x": 0.469,
+    "y": 0.74,
+    "z": -0.345
+   },
+   "duration": 1.5
+  },
+  {
+   "label": "retreat",
+   "position": {
+    "relativeTo": "body",
+    "x": 0.2,
+    "y": 0.95,
+    "z": -0.15
+   },
+   "duration": 0.6
+  }
+ ]
+}

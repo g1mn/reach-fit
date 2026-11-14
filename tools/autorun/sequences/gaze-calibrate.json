@@ -1,0 +1,8 @@
+{
+ "leftDeg": 35,
+ "rightDeg": -35,
+ "distance": 0.5,
+ "tableY": 0.72,
+ "holdS": 1.0,
+ "waitForGazeS": 25
+}

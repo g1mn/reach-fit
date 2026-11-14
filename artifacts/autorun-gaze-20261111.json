@@ -1,0 +1,1237 @@
+{
+ "mode": "gaze",
+ "startedAt": "2026-11-11T11:38:31Z",
+ "finishedAt": "2026-11-11T11:41:00.037Z",
+ "device": {
+  "inputMode": "head gaze only",
+  "disconnected": [
+   "hand-left",
+   "hand-right",
+   "controller-left",
+   "controller-right"
+  ]
+ },
+ "reach": {
+  "center": [
+   0,
+   0.7250000238418579,
+   0
+  ],
+  "radius": 0.45,
+  "startDeg": -35.00000312302016,
+  "endDeg": 35.00000312302016,
+  "source": "gaze"
+ },
+ "table": {
+  "height": 0.7250000238418579,
+  "source": "plane"
+ },
+ "levels": [
+  {
+   "levelId": "L01",
+   "solved": true,
+   "rotations": 1,
+   "minRotations": 1,
+   "ms": 1640,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 1
+   },
+   "actions": 1
+  },
+  {
+   "levelId": "L02",
+   "solved": true,
+   "rotations": 2,
+   "minRotations": 2,
+   "ms": 2700,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 2
+   },
+   "actions": 2
+  },
+  {
+   "levelId": "L03",
+   "solved": true,
+   "rotations": 3,
+   "minRotations": 3,
+   "ms": 3984,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 3
+   },
+   "actions": 3
+  },
+  {
+   "levelId": "L04",
+   "solved": true,
+   "rotations": 4,
+   "minRotations": 4,
+   "ms": 5101,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 4
+   },
+   "actions": 4
+  },
+  {
+   "levelId": "L05",
+   "solved": true,
+   "rotations": 5,
+   "minRotations": 5,
+   "ms": 6418,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 5
+   },
+   "actions": 5
+  },
+  {
+   "levelId": "L06",
+   "solved": true,
+   "rotations": 6,
+   "minRotations": 6,
+   "ms": 7634,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 6
+   },
+   "actions": 6
+  },
+  {
+   "levelId": "L07",
+   "solved": true,
+   "rotations": 6,
+   "minRotations": 6,
+   "ms": 7533,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 6
+   },
+   "actions": 6
+  },
+  {
+   "levelId": "L08",
+   "solved": true,
+   "rotations": 7,
+   "minRotations": 7,
+   "ms": 8916,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 7
+   },
+   "actions": 7
+  },
+  {
+   "levelId": "L09",
+   "solved": true,
+   "rotations": 9,
+   "minRotations": 9,
+   "ms": 11300,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 9
+   },
+   "actions": 9
+  },
+  {
+   "levelId": "L10",
+   "solved": true,
+   "rotations": 10,
+   "minRotations": 10,
+   "ms": 12567,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 10
+   },
+   "actions": 10
+  },
+  {
+   "levelId": "L11",
+   "solved": true,
+   "rotations": 11,
+   "minRotations": 11,
+   "ms": 13986,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 11
+   },
+   "actions": 11
+  },
+  {
+   "levelId": "L12",
+   "solved": true,
+   "rotations": 11,
+   "minRotations": 11,
+   "ms": 18316,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 11
+   },
+   "actions": 11
+  },
+  {
+   "levelId": "daily-2026-11-11",
+   "solved": true,
+   "rotations": 6,
+   "minRotations": 6,
+   "ms": 8070,
+   "misGrabs": 0,
+   "inputs": {
+    "gaze": 6
+   },
+   "actions": 6
+  }
+ ],
+ "solvedCount": 13,
+ "attempted": 13,
+ "consoleErrors": 0,
+ "consoleErrorSamples": [],
+ "cli": {
+  "calls": 352,
+  "failed": 0,
+  "meanMs": 124,
+  "maxMs": 552
+ },
+ "pageReloads": 0,
+ "notes": [],
+ "appLog": [
+  {
+   "type": "table",
+   "surface": {
+    "height": 0.72,
+    "source": "virtual"
+   },
+   "t": 1256.8999999985099
+  },
+  {
+   "type": "reach-set",
+   "arc": {
+    "center": [
+     0,
+     0.72,
+     0.25
+    ],
+    "radius": 0.45,
+    "startDeg": -40,
+    "endDeg": 40,
+    "source": "default"
+   },
+   "t": 1256.8999999985099
+  },
+  {
+   "type": "level-start",
+   "levelId": "daily-2026-11-11",
+   "t": 1263.5
+  },
+  {
+   "type": "level-start",
+   "levelId": "L01",
+   "t": 1396.7999999970198
+  },
+  {
+   "type": "reach-sample",
+   "x": -0.2581094164502488,
+   "y": 0.72,
+   "z": -0.368618405861281,
+   "source": "gaze",
+   "t": 13778
+  },
+  {
+   "type": "reach-sample",
+   "x": 0.2581094164502488,
+   "y": 0.72,
+   "z": -0.368618405861281,
+   "source": "gaze",
+   "t": 14994.10000000149
+  },
+  {
+   "type": "table",
+   "surface": {
+    "height": 0.7250000238418579,
+    "source": "plane"
+   },
+   "t": 14995.5
+  },
+  {
+   "type": "reach-set",
+   "arc": {
+    "center": [
+     0,
+     0.7250000238418579,
+     0
+    ],
+    "radius": 0.45,
+    "startDeg": -35.00000312302016,
+    "endDeg": 35.00000312302016,
+    "source": "gaze"
+   },
+   "t": 14995.5
+  },
+  {
+   "type": "level-start",
+   "levelId": "L01",
+   "t": 15005.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_1",
+   "r": 1,
+   "c": 1,
+   "input": "gaze",
+   "t": 16645.19999999553
+  },
+  {
+   "type": "level-end",
+   "levelId": "L01",
+   "rotations": 1,
+   "minRotations": 1,
+   "ms": 1639.8999999985099,
+   "t": 16645.79999999702
+  },
+  {
+   "type": "level-start",
+   "levelId": "L02",
+   "t": 18061
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_0",
+   "r": 0,
+   "c": 0,
+   "input": "gaze",
+   "t": 19527.69999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_0",
+   "r": 0,
+   "c": 0,
+   "input": "gaze",
+   "t": 20760.60000000149
+  },
+  {
+   "type": "level-end",
+   "levelId": "L02",
+   "rotations": 2,
+   "minRotations": 2,
+   "ms": 2700,
+   "t": 20761
+  },
+  {
+   "type": "level-start",
+   "levelId": "L03",
+   "t": 22160.79999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_2",
+   "r": 1,
+   "c": 2,
+   "input": "gaze",
+   "t": 23677
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_3",
+   "r": 0,
+   "c": 3,
+   "input": "gaze",
+   "t": 24893.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_3",
+   "r": 0,
+   "c": 3,
+   "input": "gaze",
+   "t": 26143.89999999851
+  },
+  {
+   "type": "level-end",
+   "levelId": "L03",
+   "rotations": 3,
+   "minRotations": 3,
+   "ms": 3983.5,
+   "t": 26144.29999999702
+  },
+  {
+   "type": "level-start",
+   "levelId": "L04",
+   "t": 27543.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_1",
+   "r": 0,
+   "c": 1,
+   "input": "gaze",
+   "t": 28976.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_0",
+   "r": 0,
+   "c": 0,
+   "input": "gaze",
+   "t": 30193.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_0",
+   "r": 0,
+   "c": 0,
+   "input": "gaze",
+   "t": 31410.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_0",
+   "r": 1,
+   "c": 0,
+   "input": "gaze",
+   "t": 32644.39999999851
+  },
+  {
+   "type": "level-end",
+   "levelId": "L04",
+   "rotations": 4,
+   "minRotations": 4,
+   "ms": 5101.10000000149,
+   "t": 32645
+  },
+  {
+   "type": "level-start",
+   "levelId": "L05",
+   "t": 34175.69999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_4",
+   "r": 1,
+   "c": 4,
+   "input": "gaze",
+   "t": 35643.10000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_4",
+   "r": 0,
+   "c": 4,
+   "input": "gaze",
+   "t": 36893.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_4",
+   "r": 0,
+   "c": 4,
+   "input": "gaze",
+   "t": 38126.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_4",
+   "r": 0,
+   "c": 4,
+   "input": "gaze",
+   "t": 39376.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_3",
+   "r": 0,
+   "c": 3,
+   "input": "gaze",
+   "t": 40593.10000000149
+  },
+  {
+   "type": "level-end",
+   "levelId": "L05",
+   "rotations": 5,
+   "minRotations": 5,
+   "ms": 6418.19999999553,
+   "t": 40593.79999999702
+  },
+  {
+   "type": "level-start",
+   "levelId": "L06",
+   "t": 42042.60000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_0",
+   "r": 2,
+   "c": 0,
+   "input": "gaze",
+   "t": 43476.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_1",
+   "r": 1,
+   "c": 1,
+   "input": "gaze",
+   "t": 44759.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_1",
+   "r": 2,
+   "c": 1,
+   "input": "gaze",
+   "t": 46042.79999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_1",
+   "r": 2,
+   "c": 1,
+   "input": "gaze",
+   "t": 47242.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_1",
+   "r": 2,
+   "c": 1,
+   "input": "gaze",
+   "t": 48475.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_2",
+   "r": 2,
+   "c": 2,
+   "input": "gaze",
+   "t": 49676.29999999702
+  },
+  {
+   "type": "level-end",
+   "levelId": "L06",
+   "rotations": 6,
+   "minRotations": 6,
+   "ms": 7634.19999999553,
+   "t": 49676.79999999702
+  },
+  {
+   "type": "level-start",
+   "levelId": "L07",
+   "t": 51142.69999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_1",
+   "r": 2,
+   "c": 1,
+   "input": "gaze",
+   "t": 52542.5
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_1",
+   "r": 2,
+   "c": 1,
+   "input": "gaze",
+   "t": 53758.69999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_1",
+   "r": 1,
+   "c": 1,
+   "input": "gaze",
+   "t": 54992
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_1",
+   "r": 1,
+   "c": 1,
+   "input": "gaze",
+   "t": 56226.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_2",
+   "r": 1,
+   "c": 2,
+   "input": "gaze",
+   "t": 57459
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_2",
+   "r": 0,
+   "c": 2,
+   "input": "gaze",
+   "t": 58675.39999999851
+  },
+  {
+   "type": "level-end",
+   "levelId": "L07",
+   "rotations": 6,
+   "minRotations": 6,
+   "ms": 7533.20000000298,
+   "t": 58675.89999999851
+  },
+  {
+   "type": "level-start",
+   "levelId": "L08",
+   "t": 60142.60000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_3_2",
+   "r": 3,
+   "c": 2,
+   "input": "gaze",
+   "t": 61608.79999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_3_3",
+   "r": 3,
+   "c": 3,
+   "input": "gaze",
+   "t": 62858.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_3_3",
+   "r": 3,
+   "c": 3,
+   "input": "gaze",
+   "t": 64075.5
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_3_3",
+   "r": 3,
+   "c": 3,
+   "input": "gaze",
+   "t": 65375.60000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_3",
+   "r": 0,
+   "c": 3,
+   "input": "gaze",
+   "t": 66625.69999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_3",
+   "r": 0,
+   "c": 3,
+   "input": "gaze",
+   "t": 67842.79999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_3",
+   "r": 0,
+   "c": 3,
+   "input": "gaze",
+   "t": 69058.39999999851
+  },
+  {
+   "type": "level-end",
+   "levelId": "L08",
+   "rotations": 7,
+   "minRotations": 7,
+   "ms": 8916.19999999553,
+   "t": 69058.79999999702
+  },
+  {
+   "type": "level-start",
+   "levelId": "L09",
+   "t": 70458.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_3",
+   "r": 1,
+   "c": 3,
+   "input": "gaze",
+   "t": 71858.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_3",
+   "r": 1,
+   "c": 3,
+   "input": "gaze",
+   "t": 73091
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_3",
+   "r": 1,
+   "c": 3,
+   "input": "gaze",
+   "t": 74291.60000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_2",
+   "r": 0,
+   "c": 2,
+   "input": "gaze",
+   "t": 75558.5
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_2",
+   "r": 0,
+   "c": 2,
+   "input": "gaze",
+   "t": 76774.69999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_2",
+   "r": 0,
+   "c": 2,
+   "input": "gaze",
+   "t": 78024.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_1",
+   "r": 1,
+   "c": 1,
+   "input": "gaze",
+   "t": 79275
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_1",
+   "r": 1,
+   "c": 1,
+   "input": "gaze",
+   "t": 80525.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_1",
+   "r": 1,
+   "c": 1,
+   "input": "gaze",
+   "t": 81758.10000000149
+  },
+  {
+   "type": "level-end",
+   "levelId": "L09",
+   "rotations": 9,
+   "minRotations": 9,
+   "ms": 11299.70000000298,
+   "t": 81758.60000000149
+  },
+  {
+   "type": "level-start",
+   "levelId": "L10",
+   "t": 83191.79999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_4",
+   "r": 1,
+   "c": 4,
+   "input": "gaze",
+   "t": 84608.10000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_4",
+   "r": 0,
+   "c": 4,
+   "input": "gaze",
+   "t": 85841.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_4",
+   "r": 0,
+   "c": 4,
+   "input": "gaze",
+   "t": 87074.60000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_3",
+   "r": 1,
+   "c": 3,
+   "input": "gaze",
+   "t": 88324.60000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_2",
+   "r": 1,
+   "c": 2,
+   "input": "gaze",
+   "t": 89607.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_2",
+   "r": 0,
+   "c": 2,
+   "input": "gaze",
+   "t": 90823.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_2",
+   "r": 0,
+   "c": 2,
+   "input": "gaze",
+   "t": 92057.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_2",
+   "r": 0,
+   "c": 2,
+   "input": "gaze",
+   "t": 93273.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_1",
+   "r": 0,
+   "c": 1,
+   "input": "gaze",
+   "t": 94490.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_1",
+   "r": 0,
+   "c": 1,
+   "input": "gaze",
+   "t": 95756.79999999702
+  },
+  {
+   "type": "level-end",
+   "levelId": "L10",
+   "rotations": 10,
+   "minRotations": 10,
+   "ms": 12567.39999999851,
+   "t": 95759.19999999553
+  },
+  {
+   "type": "level-start",
+   "levelId": "L11",
+   "t": 97140.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_4",
+   "r": 2,
+   "c": 4,
+   "input": "gaze",
+   "t": 98540.10000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_5",
+   "r": 1,
+   "c": 5,
+   "input": "gaze",
+   "t": 99773.69999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_5",
+   "r": 1,
+   "c": 5,
+   "input": "gaze",
+   "t": 101006.60000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_5",
+   "r": 1,
+   "c": 5,
+   "input": "gaze",
+   "t": 102207.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_5",
+   "r": 0,
+   "c": 5,
+   "input": "gaze",
+   "t": 103440.5
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_5",
+   "r": 0,
+   "c": 5,
+   "input": "gaze",
+   "t": 104757.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_5",
+   "r": 0,
+   "c": 5,
+   "input": "gaze",
+   "t": 106023.5
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_2",
+   "r": 0,
+   "c": 2,
+   "input": "gaze",
+   "t": 107274
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_1",
+   "r": 0,
+   "c": 1,
+   "input": "gaze",
+   "t": 108540.60000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_1",
+   "r": 0,
+   "c": 1,
+   "input": "gaze",
+   "t": 109857.19999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_1",
+   "r": 0,
+   "c": 1,
+   "input": "gaze",
+   "t": 111122.89999999851
+  },
+  {
+   "type": "level-end",
+   "levelId": "L11",
+   "rotations": 11,
+   "minRotations": 11,
+   "ms": 13985.80000000447,
+   "t": 111126.10000000149
+  },
+  {
+   "type": "level-start",
+   "levelId": "L12",
+   "t": 112807.69999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_0",
+   "r": 2,
+   "c": 0,
+   "input": "gaze",
+   "t": 114843
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_3_0",
+   "r": 3,
+   "c": 0,
+   "input": "gaze",
+   "t": 116554.10000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_3_0",
+   "r": 3,
+   "c": 0,
+   "input": "gaze",
+   "t": 118558.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_1",
+   "r": 2,
+   "c": 1,
+   "input": "gaze",
+   "t": 120757.89999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_1",
+   "r": 2,
+   "c": 1,
+   "input": "gaze",
+   "t": 122274.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_1",
+   "r": 2,
+   "c": 1,
+   "input": "gaze",
+   "t": 123923.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_2",
+   "r": 2,
+   "c": 2,
+   "input": "gaze",
+   "t": 125158.79999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_3",
+   "r": 2,
+   "c": 3,
+   "input": "gaze",
+   "t": 126507.69999999553
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_1_3",
+   "r": 1,
+   "c": 3,
+   "input": "gaze",
+   "t": 127824.60000000149
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_3",
+   "r": 0,
+   "c": 3,
+   "input": "gaze",
+   "t": 129840.39999999851
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_0_1",
+   "r": 0,
+   "c": 1,
+   "input": "gaze",
+   "t": 131122.79999999702
+  },
+  {
+   "type": "level-end",
+   "levelId": "L12",
+   "rotations": 11,
+   "minRotations": 11,
+   "ms": 18315.59999999404,
+   "t": 131123.19999999553
+  },
+  {
+   "type": "level-start",
+   "levelId": "daily-2026-11-11",
+   "t": 132691.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_3_4",
+   "r": 3,
+   "c": 4,
+   "input": "gaze",
+   "t": 134240.3999999985
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_3_3",
+   "r": 3,
+   "c": 3,
+   "input": "gaze",
+   "t": 135522.79999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_3_3",
+   "r": 3,
+   "c": 3,
+   "input": "gaze",
+   "t": 136906.29999999702
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_3",
+   "r": 2,
+   "c": 3,
+   "input": "gaze",
+   "t": 138122.6000000015
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_3",
+   "r": 2,
+   "c": 3,
+   "input": "gaze",
+   "t": 139540.1000000015
+  },
+  {
+   "type": "rotate",
+   "target": "Tile_2_3",
+   "r": 2,
+   "c": 3,
+   "input": "gaze",
+   "t": 140756.1000000015
+  },
+  {
+   "type": "level-end",
+   "levelId": "daily-2026-11-11",
+   "rotations": 6,
+   "minRotations": 6,
+   "ms": 8069.70000000298,
+   "t": 140761
+  }
+ ],
+ "frameSummariesNote": "Frame times of the emulator in a headless browser on a Mac. Not Quest performance.",
+ "frameSummaries": [
+  {
+   "segment": "daily-2026-11-11",
+   "frames": 7,
+   "meanMs": 21.299999999148504,
+   "maxMs": 48.20000000298023,
+   "p50Ms": 16.5,
+   "p95Ms": 48.5,
+   "longFrames": 1
+  },
+  {
+   "segment": "L01",
+   "frames": 40,
+   "meanMs": 17.0875,
+   "maxMs": 47.80000000447035,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 1
+  },
+  {
+   "segment": "calibrate",
+   "frames": 761,
+   "meanMs": 16.973850197111027,
+   "maxMs": 176.10000000149012,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 4
+  },
+  {
+   "segment": "L01",
+   "frames": 184,
+   "meanMs": 16.667934782600597,
+   "maxMs": 24.899999998509884,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L02",
+   "frames": 246,
+   "meanMs": 16.66585365852447,
+   "maxMs": 17.899999998509884,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L03",
+   "frames": 323,
+   "meanMs": 16.6665634675061,
+   "maxMs": 18,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L04",
+   "frames": 398,
+   "meanMs": 16.662311557792687,
+   "maxMs": 18.5,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L05",
+   "frames": 472,
+   "meanMs": 16.66800847456996,
+   "maxMs": 19.5,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L06",
+   "frames": 546,
+   "meanMs": 16.66630036629491,
+   "maxMs": 19.299999997019768,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L07",
+   "frames": 540,
+   "meanMs": 16.664259259264778,
+   "maxMs": 18.099999994039536,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L08",
+   "frames": 619,
+   "meanMs": 16.667043618737495,
+   "maxMs": 24.399999998509884,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L09",
+   "frames": 764,
+   "meanMs": 16.666361256546452,
+   "maxMs": 18.200000002980232,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L10",
+   "frames": 837,
+   "meanMs": 16.66511350060093,
+   "maxMs": 18.19999999552965,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 0
+  },
+  {
+   "segment": "L11",
+   "frames": 936,
+   "meanMs": 16.737713675213676,
+   "maxMs": 97.5,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 3
+  },
+  {
+   "segment": "L12",
+   "frames": 1149,
+   "meanMs": 17.30356832027591,
+   "maxMs": 188.79999999701977,
+   "p50Ms": 16.5,
+   "p95Ms": 18.5,
+   "longFrames": 28
+  },
+  {
+   "segment": "daily-2026-11-11",
+   "frames": 518,
+   "meanMs": 16.7967181467239,
+   "maxMs": 62.5,
+   "p50Ms": 16.5,
+   "p95Ms": 17.5,
+   "longFrames": 2
+  }
+ ]
+}
