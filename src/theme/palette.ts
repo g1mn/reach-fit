@@ -28,7 +28,17 @@
  * red/green pair.
  */
 
-/** sRGB hex colors, as shown on screen. */
+/**
+ * Contrast modes, picked with the Contrast button in XR.
+ * - standard: the default look described above.
+ * - max: pure black and white with saturated marks, white buttons, no pulse.
+ * - dim: lower brightness for light-sensitive players, no pulse, still AAA.
+ * Every mode passes the same pair check (scripts/contrast-check.ts).
+ */
+export type ContrastMode = 'standard' | 'max' | 'dim';
+export const CONTRAST_MODES: readonly ContrastMode[] = ['standard', 'max', 'dim'];
+
+/** sRGB hex colors, as shown on screen. Standard mode. */
 export const PALETTE = {
   /** Opaque base under the tiles. */
   board: '#070B14',
@@ -55,7 +65,66 @@ export const PALETTE = {
   panelText: '#F2F5FA',
   /** Highlighted text and button labels on panels. */
   panelAccent: '#FFD447',
+  /** In-XR button face, its label, the face under a look or pointer, and its outline on the panel. */
+  buttonBg: '#2D3A4A',
+  buttonText: '#FFFFFF',
+  buttonHover: '#3B5068',
+  buttonEdge: '#A7B3C3',
 } as const;
+
+export type Palette = { readonly [K in keyof typeof PALETTE]: string };
+
+export const PALETTES: Readonly<Record<ContrastMode, Palette>> = {
+  standard: PALETTE,
+  max: {
+    board: '#000000',
+    tileFace: '#FFFFFF',
+    pathIdle: '#000000',
+    pathLit: '#FFE600',
+    // Not white: a white disc on a white face would read as a ring, like the target.
+    source: '#FFE600',
+    target: '#00E5FF',
+    block: '#D0D0D0',
+    gazeRing: '#0000A8',
+    hover: '#FFFFFF',
+    panelBg: '#000000',
+    panelText: '#FFFFFF',
+    panelAccent: '#FFE600',
+    buttonBg: '#FFFFFF',
+    buttonText: '#000000',
+    buttonHover: '#FFE600',
+    buttonEdge: '#FFFFFF',
+  },
+  dim: {
+    board: '#05070C',
+    tileFace: '#B9C1CE',
+    pathIdle: '#161B26',
+    pathLit: '#D9B84A',
+    source: '#E3D6A8',
+    target: '#62BFD6',
+    block: '#ADB5C2',
+    gazeRing: '#24106E',
+    hover: '#D0D6E0',
+    panelBg: '#0A0D14',
+    panelText: '#C9D0DB',
+    panelAccent: '#D9B84A',
+    buttonBg: '#1E2633',
+    buttonText: '#C9D0DB',
+    buttonHover: '#2C3848',
+    buttonEdge: '#A3ABB7',
+  },
+};
+
+/** Whether lit cores and lit targets pulse in each mode. Max and dim hold still. */
+export const PULSE_BY_MODE: Readonly<Record<ContrastMode, boolean>> = {
+  standard: true,
+  max: false,
+  dim: false,
+};
+
+export function isContrastMode(value: unknown): value is ContrastMode {
+  return typeof value === 'string' && (CONTRAST_MODES as readonly string[]).includes(value);
+}
 
 export type PaletteKey = keyof typeof PALETTE;
 
@@ -80,6 +149,8 @@ export interface ContrastPair {
   /** Linear gain applied to the color first (grain, pulse low point). Default 1. */
   fgGain?: number;
   bgGain?: number;
+  /** The fg gain is the pulse low point; modes without a pulse check the pair at gain 1. */
+  pulse?: boolean;
   where: string;
 }
 
@@ -112,6 +183,7 @@ export const CONTRAST_PAIRS: readonly ContrastPair[] = [
   {
     fg: 'pathLit',
     fgGain: PULSE_MIN_GAIN,
+    pulse: true,
     bg: 'pathIdle',
     where: 'lit core at the pulse low point',
   },
@@ -125,6 +197,7 @@ export const CONTRAST_PAIRS: readonly ContrastPair[] = [
   {
     fg: 'target',
     fgGain: PULSE_MIN_GAIN,
+    pulse: true,
     bg: 'pathIdle',
     where: 'lit target at the pulse low point',
   },
@@ -135,6 +208,9 @@ export const CONTRAST_PAIRS: readonly ContrastPair[] = [
   { fg: 'hover', bg: 'pathIdle', where: 'hover frame next to a dark side wall' },
   { fg: 'panelText', bg: 'panelBg', where: 'panel text' },
   { fg: 'panelAccent', bg: 'panelBg', where: 'panel highlight text' },
+  { fg: 'buttonText', bg: 'buttonBg', where: 'button label' },
+  { fg: 'buttonText', bg: 'buttonHover', where: 'button label under a look or a pointer' },
+  { fg: 'buttonEdge', bg: 'panelBg', where: 'button outline on the panel' },
 ];
 
 /** '#rgb' or '#rrggbb' to sRGB channels in 0..1. Throws on anything else. */
@@ -203,8 +279,8 @@ export function shadeHex(hex: string, gain: number): string {
   ]);
 }
 
-function side(key: PaletteKey, gain: number | undefined): string {
-  return gain === undefined || gain === 1 ? PALETTE[key] : shadeHex(PALETTE[key], gain);
+function side(key: PaletteKey, gain: number | undefined, palette: Palette): string {
+  return gain === undefined || gain === 1 ? palette[key] : shadeHex(palette[key], gain);
 }
 
 /** For example 'pathIdle/tileFace*0.88'. */
@@ -213,8 +289,24 @@ export function pairLabel(pair: ContrastPair): string {
   return `${pair.fg}${g(pair.fgGain)}/${pair.bg}${g(pair.bgGain)}`;
 }
 
-export function pairRatio(pair: ContrastPair): number {
-  return contrastRatio(side(pair.fg, pair.fgGain), side(pair.bg, pair.bgGain));
+/** Contrast of one pair in a mode (standard by default). Pulse pairs use gain 1 in modes without a pulse. */
+export function pairRatio(pair: ContrastPair, mode: ContrastMode = 'standard'): number {
+  const palette = PALETTES[mode];
+  const fgGain = pair.pulse && !PULSE_BY_MODE[mode] ? 1 : pair.fgGain;
+  return contrastRatio(side(pair.fg, fgGain, palette), side(pair.bg, pair.bgGain, palette));
+}
+
+/** Lowest pair of a mode, for the check script and the trailer card. */
+export function lowestPair(mode: ContrastMode): { label: string; ratio: number } {
+  let best = { label: '', ratio: Number.POSITIVE_INFINITY };
+  for (const pair of CONTRAST_PAIRS) {
+    const ratio = pairRatio(pair, mode);
+    if (ratio < best.ratio) {
+      const gain = pair.pulse && !PULSE_BY_MODE[mode] ? undefined : pair.fgGain;
+      best = { label: pairLabel({ ...pair, fgGain: gain }), ratio };
+    }
+  }
+  return best;
 }
 
 /**

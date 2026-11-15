@@ -77,7 +77,7 @@ export interface Level {
 }
 
 /** How the player triggered an action. 'auto' is the scripted autorun. */
-export type InputKind = 'pinch' | 'gaze' | 'voice' | 'controller' | 'auto';
+export type InputKind = 'pinch' | 'gaze' | 'voice' | 'controller' | 'keyboard' | 'auto';
 
 /** One player action: turn the tile at (r, c) clockwise by one step. */
 export interface Move {

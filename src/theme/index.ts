@@ -14,14 +14,26 @@
  * in the contrast check too.
  */
 export {
+  CONTRAST_MODES,
   CONTRAST_PAIRS,
   MIN_CONTRAST,
   PALETTE,
+  PALETTES,
   contrastRatio,
+  isContrastMode,
   pulseGain,
+  type ContrastMode,
   type ContrastPair,
+  type Palette,
   type PaletteKey,
 } from './palette.ts';
-export { disposeTheme, getThemeMaterials, updateTheme, type ThemeMaterials } from './materials.ts';
+export {
+  disposeTheme,
+  getThemeMaterials,
+  getThemeMode,
+  setThemeMode,
+  updateTheme,
+  type ThemeMaterials,
+} from './materials.ts';
 export { createTileVisual, disposeTileShapes, TILE_LAYOUT, type TileVisual } from './tile-visual.ts';
 export { cellCenter, createArcBase, createBoardBase, type ArcBaseOptions } from './board-base.ts';

@@ -21,6 +21,7 @@ const DIR = new URL('../src/i18n/', import.meta.url);
 const SAME_AS_EN: Readonly<Record<string, string>> = {
   'app.title': 'product name',
   'de:level.label': 'German games say "Level"',
+  'settings.seconds': 'the SI symbol s is the same in these languages',
 };
 
 /** Single-key buttons (xr/layer.ts, ui/page.ts, game/page-extras.ts). */
@@ -34,13 +35,20 @@ const BUTTON_KEYS = [
   'settings.language',
 ] as const;
 
-/** The sound button is built as `${sound}: ${on|off}` in xr/layer.ts. */
+/**
+ * Two-part buttons built in xr/layer.ts: `${name}: ${value}` (sound, voice,
+ * and the access row: contrast, look time, mic sensitivity).
+ */
 function soundLabels(m: Messages): string[] {
+  const seconds = (m['settings.seconds'] ?? '').replace('{seconds}', '0.8');
   return [
     `${m['settings.sound']}: ${m['settings.on']}`,
     `${m['settings.sound']}: ${m['settings.off']}`,
     `${m['settings.voice']}: ${m['settings.on']}`,
     `${m['settings.voice']}: ${m['settings.voiceNone']}`,
+    ...['standard', 'max', 'dim'].map((k) => `${m['settings.contrast']}: ${m[`contrast.${k}`]}`),
+    `${m['settings.look']}: ${seconds}`,
+    ...['low', 'medium', 'high'].map((k) => `${m['settings.mic']}: ${m[`mic.${k}`]}`),
   ];
 }
 

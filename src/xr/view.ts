@@ -22,6 +22,7 @@ import {
 } from '@iwsdk/core';
 import { DIRS, OPENINGS } from '../puzzle/types.ts';
 import type { Rotation, Tile } from '../puzzle/types.ts';
+import { PALETTE, type Palette } from '../theme/palette.ts';
 import { TILE_VISUAL_RATIO } from './arc.ts';
 import { TextPlane } from './text.ts';
 
@@ -226,8 +227,12 @@ export type ButtonName =
   | 'Btn_Reach'
   | 'Btn_Language'
   | 'Btn_Sound'
-  | 'Btn_Voice';
-export const BUTTON_NAMES: readonly ButtonName[] = [
+  | 'Btn_Voice'
+  | 'Btn_Contrast'
+  | 'Btn_Look'
+  | 'Btn_Mic';
+/** First row: game and general buttons. */
+export const MAIN_BUTTONS: readonly ButtonName[] = [
   'Btn_Next',
   'Btn_Restart',
   'Btn_Reach',
@@ -235,27 +240,53 @@ export const BUTTON_NAMES: readonly ButtonName[] = [
   'Btn_Sound',
   'Btn_Voice',
 ];
+/** Second row: access settings, always on show (no menu to open). */
+export const ACCESS_BUTTONS: readonly ButtonName[] = ['Btn_Contrast', 'Btn_Look', 'Btn_Mic'];
+export const BUTTON_NAMES: readonly ButtonName[] = [...MAIN_BUTTONS, ...ACCESS_BUTTONS];
 
 /** Button size, m. Design value. */
 export const BUTTON_W = 0.066;
 export const BUTTON_H = 0.036;
 const BUTTON_D = 0.008;
+/** Gap between buttons in a row, m. Design value. */
+const BUTTON_GAP = 0.004;
+/** Outline around each button face, m on each side. Design value. */
+const BUTTON_EDGE = 0.0015;
+/** Width of a second-row button: three of them span the first row. */
+export const ACCESS_BUTTON_W =
+  (MAIN_BUTTONS.length * BUTTON_W + (MAIN_BUTTONS.length - 1) * BUTTON_GAP - 2 * BUTTON_GAP) / 3;
 
 export class ButtonView {
   readonly root: Group;
+  readonly width: number;
   private readonly faceMat = basic(COLORS.buttonBg);
+  private readonly edgeMat = basic(COLORS.buttonBg);
   private readonly label: TextPlane;
   private readonly bar: Mesh;
+  private readonly barMat = basic(COLORS.ring);
+  private readonly meter: Mesh;
+  private readonly meterMat = basic(COLORS.ring);
   private readonly owned: (BufferGeometry | MeshBasicMaterial)[] = [];
+  private colors: Palette = PALETTE;
+  private hover = false;
 
-  constructor(name: ButtonName) {
+  constructor(name: ButtonName, width = BUTTON_W) {
     this.root = new Group();
     this.root.name = name;
-    const faceGeo = new BoxGeometry(BUTTON_W, BUTTON_H, BUTTON_D);
+    this.width = width;
+    const faceGeo = new BoxGeometry(width, BUTTON_H, BUTTON_D);
     const face = new Mesh(faceGeo, this.faceMat);
     face.name = 'button-face';
     this.root.add(face);
-    this.label = new TextPlane(BUTTON_W * 0.94, BUTTON_H * 0.86, {
+    // Outline: a slightly larger flat box just behind the face, so the button
+    // edge stands out from the panel in every contrast mode (checked pair
+    // buttonEdge/panelBg).
+    const edgeGeo = new BoxGeometry(width + 2 * BUTTON_EDGE, BUTTON_H + 2 * BUTTON_EDGE, BUTTON_D / 2);
+    const edge = new Mesh(edgeGeo, this.edgeMat);
+    edge.name = 'button-edge';
+    edge.position.z = -BUTTON_D / 4 - 0.0005;
+    this.root.add(edge);
+    this.label = new TextPlane(width * 0.94, BUTTON_H * 0.86, {
       color: COLORS.buttonText,
       background: null,
       maxFontPx: 30,
@@ -265,13 +296,19 @@ export class ButtonView {
     this.label.mesh.position.z = BUTTON_D / 2 + 0.0006;
     this.root.add(this.label.mesh);
     const barGeo = new BoxGeometry(1, 1, 1);
-    const barMat = basic(COLORS.ring);
-    this.bar = new Mesh(barGeo, barMat);
+    this.bar = new Mesh(barGeo, this.barMat);
     this.bar.scale.set(0.0001, 0.003, 0.002);
-    this.bar.position.set(-BUTTON_W / 2, -BUTTON_H / 2 - 0.004, 0);
+    this.bar.position.set(-width / 2, -BUTTON_H / 2 - 0.004, 0);
     this.bar.visible = false;
     this.root.add(this.bar);
-    this.owned.push(faceGeo, this.faceMat, barGeo, barMat);
+    // Loudness meter above the Mic button: how close the last sound came to counting.
+    this.meter = new Mesh(barGeo, this.meterMat);
+    this.meter.scale.set(0.0001, 0.005, 0.002);
+    this.meter.position.set(-width / 2, BUTTON_H / 2 + 0.0055, 0);
+    this.meter.visible = false;
+    this.root.add(this.meter);
+    this.owned.push(faceGeo, this.faceMat, edgeGeo, this.edgeMat, barGeo, this.barMat, this.meterMat);
+    this.setColors(PALETTE);
   }
 
   setLabel(text: string): void {
@@ -279,14 +316,36 @@ export class ButtonView {
   }
 
   setHover(on: boolean): void {
-    this.faceMat.color.setHex(on ? COLORS.buttonHover : COLORS.buttonBg);
+    this.hover = on;
+    this.faceMat.color.set(on ? this.colors.buttonHover : this.colors.buttonBg);
+  }
+
+  /** Colors of a contrast mode. */
+  setColors(colors: Palette): void {
+    this.colors = colors;
+    this.edgeMat.color.set(colors.buttonEdge);
+    this.barMat.color.set(colors.panelText);
+    this.label.setColors(colors.buttonText, null);
+    this.setHover(this.hover);
   }
 
   setGazeProgress(p: number): void {
     this.bar.visible = p > 0;
-    const w = Math.max(0.0001, BUTTON_W * Math.min(1, p));
+    const w = Math.max(0.0001, this.width * Math.min(1, p));
     this.bar.scale.x = w;
-    this.bar.position.x = -BUTTON_W / 2 + w / 2;
+    this.bar.position.x = -this.width / 2 + w / 2;
+  }
+
+  /** null hides the meter. level 0 to 1; at 1 the sound counts and the bar turns the accent color. */
+  setMeter(level: number | null): void {
+    this.meter.visible = level !== null;
+    if (level === null) {
+      return;
+    }
+    const w = Math.max(0.0001, this.width * Math.min(1, level));
+    this.meter.scale.x = w;
+    this.meter.position.x = -this.width / 2 + w / 2;
+    this.meterMat.color.set(level >= 1 ? this.colors.panelAccent : this.colors.panelText);
   }
 
   dispose(): void {
@@ -297,34 +356,38 @@ export class ButtonView {
   }
 }
 
-/** Panel size, m. Design value. */
+/** Panel size, m. Design value. PANEL_H is the message area (top part); the panel plate reaches PANEL_BOTTOM. */
 export const PANEL_W = 0.42;
 export const PANEL_H = 0.19;
+/** Lowest point of the panel plate below its origin, m (two button rows). Design value. */
+export const PANEL_BOTTOM = -0.146;
+const ROW1_Y = -0.062;
+const ROW2_Y = ROW1_Y - BUTTON_H - 0.016;
 
 /** Upright instruction panel; the buttons are separate entities parented to `root`. */
 export class PanelView {
   readonly root = new Group();
   readonly message: TextPlane;
   readonly status: TextPlane;
-  private readonly bgGeo = new PlaneGeometry(PANEL_W, PANEL_H);
-  private readonly bgMat = new MeshBasicMaterial({ color: 0x0b0f14, toneMapped: false });
+  private readonly bgGeo = new PlaneGeometry(PANEL_W, PANEL_H / 2 - PANEL_BOTTOM);
+  private readonly bgMat = new MeshBasicMaterial({ color: PALETTE.panelBg, toneMapped: false });
 
   constructor() {
     this.root.name = 'ReachFitPanel';
     const bg = new Mesh(this.bgGeo, this.bgMat);
-    bg.position.z = -0.001;
+    bg.position.set(0, (PANEL_H / 2 + PANEL_BOTTOM) / 2, -0.001);
     this.root.add(bg);
     this.message = new TextPlane(PANEL_W * 0.94, 0.085, {
-      color: COLORS.panelText,
-      background: COLORS.panelBg,
+      color: PALETTE.panelText,
+      background: PALETTE.panelBg,
       maxFontPx: 72,
       minFontPx: 22,
     });
     this.message.mesh.position.y = 0.045;
     this.root.add(this.message.mesh);
     this.status = new TextPlane(PANEL_W * 0.94, 0.03, {
-      color: COLORS.panelText,
-      background: COLORS.panelBg,
+      color: PALETTE.panelText,
+      background: PALETTE.panelBg,
       weight: 500,
       maxFontPx: 40,
       minFontPx: 16,
@@ -333,11 +396,34 @@ export class PanelView {
     this.root.add(this.status.mesh);
   }
 
-  /** Local position of button i in the bottom row. */
+  /** Local position of a button: first row for MAIN_BUTTONS, second row for ACCESS_BUTTONS. */
+  slot(name: ButtonName): { x: number; y: number; z: number; width: number } {
+    const second = ACCESS_BUTTONS.indexOf(name);
+    if (second >= 0) {
+      const n = ACCESS_BUTTONS.length;
+      const total = n * ACCESS_BUTTON_W + (n - 1) * BUTTON_GAP;
+      return {
+        x: -total / 2 + ACCESS_BUTTON_W / 2 + second * (ACCESS_BUTTON_W + BUTTON_GAP),
+        y: ROW2_Y,
+        z: 0.006,
+        width: ACCESS_BUTTON_W,
+      };
+    }
+    const i = Math.max(0, MAIN_BUTTONS.indexOf(name));
+    return { ...this.buttonSlot(i, MAIN_BUTTONS.length), width: BUTTON_W };
+  }
+
+  /** Local position of button i in the first row. */
   buttonSlot(i: number, count: number): { x: number; y: number; z: number } {
-    const gap = 0.004;
-    const total = count * BUTTON_W + (count - 1) * gap;
-    return { x: -total / 2 + BUTTON_W / 2 + i * (BUTTON_W + gap), y: -0.062, z: 0.006 };
+    const total = count * BUTTON_W + (count - 1) * BUTTON_GAP;
+    return { x: -total / 2 + BUTTON_W / 2 + i * (BUTTON_W + BUTTON_GAP), y: ROW1_Y, z: 0.006 };
+  }
+
+  /** Colors of a contrast mode. */
+  setColors(colors: Palette): void {
+    this.bgMat.color.set(colors.panelBg);
+    this.message.setColors(colors.panelText, colors.panelBg);
+    this.status.setColors(colors.panelText, colors.panelBg);
   }
 
   dispose(): void {

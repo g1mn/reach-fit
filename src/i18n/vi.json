@@ -42,5 +42,18 @@
   "settings.off": "Tắt",
   "settings.voice": "Giọng nói",
   "settings.voiceNone": "Không mic",
-  "error.generic": "Có lỗi xảy ra. Hãy chơi lại màn này."
+  "error.generic": "Có lỗi xảy ra. Hãy chơi lại màn này.",
+  "settings.contrast": "Tương phản",
+  "contrast.standard": "Chuẩn",
+  "contrast.max": "Tối đa",
+  "contrast.dim": "Dịu",
+  "settings.look": "Thời gian nhìn",
+  "settings.seconds": "{seconds} giây",
+  "settings.mic": "Độ nhạy micrô",
+  "mic.low": "Thấp",
+  "mic.medium": "Vừa",
+  "mic.high": "Cao",
+  "table.hand": "Không tìm thấy bàn. Bảng được đặt ở độ cao tay bạn vừa quét.",
+  "voice.noMic": "Không có micrô. Vẫn chơi bằng cách nhìn được, và Thời gian nhìn đặt độ dài lúc giữ.",
+  "page.flatPlay": "Không có kính? Chơi ngay tại đây: nhấp vào ô, hoặc dùng phím mũi tên và Enter."
 }

@@ -101,6 +101,21 @@ export class TextPlane {
     this.mesh.name = 'text';
   }
 
+  /** New text and fill colors (contrast mode). Redraws the current text. */
+  setColors(color: string, background: string | null): void {
+    if (color === this.opts.color && background === this.opts.background) {
+      return;
+    }
+    this.opts.color = color;
+    // A plane made transparent stays transparent; only its fill color changes.
+    this.opts.background = this.material.transparent ? null : (background ?? this.opts.background);
+    const text = this.text;
+    this.text = null;
+    if (text !== null) {
+      this.setText(text);
+    }
+  }
+
   setText(text: string): void {
     if (text === this.text) {
       return;

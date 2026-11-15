@@ -42,5 +42,18 @@
   "settings.off": "オフ",
   "settings.voice": "音声",
   "settings.voiceNone": "マイクなし",
-  "error.generic": "問題が発生しました。レベルをやり直してください。"
+  "error.generic": "問題が発生しました。レベルをやり直してください。",
+  "settings.contrast": "コントラスト",
+  "contrast.standard": "標準",
+  "contrast.max": "最大",
+  "contrast.dim": "控えめ",
+  "settings.look": "注視時間",
+  "settings.seconds": "{seconds}秒",
+  "settings.mic": "マイク感度",
+  "mic.low": "低",
+  "mic.medium": "中",
+  "mic.high": "高",
+  "table.hand": "テーブルが見つかりません。手でなぞった高さに盤を置きます。",
+  "voice.noMic": "マイクがありません。見つめる操作はそのまま使えます。注視時間で長さを変えられます。",
+  "page.flatPlay": "ヘッドセットがなくても、ここでタイルをクリックするか、矢印キーとEnterで遊べます。"
 }

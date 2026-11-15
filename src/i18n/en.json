@@ -42,5 +42,18 @@
   "settings.off": "Off",
   "settings.voice": "Voice",
   "settings.voiceNone": "No mic",
-  "error.generic": "Something went wrong. Restart the level."
+  "error.generic": "Something went wrong. Restart the level.",
+  "settings.contrast": "Contrast",
+  "contrast.standard": "Standard",
+  "contrast.max": "Max",
+  "contrast.dim": "Dim",
+  "settings.look": "Look time",
+  "settings.seconds": "{seconds} s",
+  "settings.mic": "Mic sensitivity",
+  "mic.low": "Low",
+  "mic.medium": "Medium",
+  "mic.high": "High",
+  "table.hand": "No table found. The board sits where your hand swept.",
+  "voice.noMic": "No microphone. Looking still works, and Look time sets how long to hold.",
+  "page.flatPlay": "No headset? Play here: click a tile, or use the arrow keys and Enter."
 }

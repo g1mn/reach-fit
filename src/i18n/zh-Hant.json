@@ -42,5 +42,18 @@
   "settings.off": "關",
   "settings.voice": "語音",
   "settings.voiceNone": "無麥克風",
-  "error.generic": "出了點問題。請重新開始這一關。"
+  "error.generic": "出了點問題。請重新開始這一關。",
+  "settings.contrast": "對比度",
+  "contrast.standard": "標準",
+  "contrast.max": "最強",
+  "contrast.dim": "柔和",
+  "settings.look": "注視時間",
+  "settings.seconds": "{seconds}秒",
+  "settings.mic": "麥克風靈敏度",
+  "mic.low": "低",
+  "mic.medium": "中",
+  "mic.high": "高",
+  "table.hand": "找不到桌面。棋盤放在你的手劃過的高度。",
+  "voice.noMic": "沒有麥克風。注視操作仍然可用，可在注視時間裡調整停留時長。",
+  "page.flatPlay": "沒有頭戴裝置？在這裡點擊方塊，或用方向鍵和 Enter 來玩。"
 }

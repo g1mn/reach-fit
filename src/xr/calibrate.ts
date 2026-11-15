@@ -79,6 +79,8 @@ export type CalibrateEvent =
 export class ReachCalibrator {
   phase: CalibratePhase = 'hand';
   arc: ReachArc | null = null;
+  /** Edge hold on the gaze path, ms. The Look button sets it with the tile look time. */
+  holdMs = GAZE_HOLD_MS;
   private phaseStart = -1;
   /** Last time the hand was SWEEP_PROGRESS_SPAN or more from its sweep start. Not cleared by resetSweep. */
   private lastMove = -1;
@@ -236,8 +238,8 @@ export class ReachCalibrator {
       this.holdYaw = head.yawDeg;
     }
     const held = t - this.holdStart;
-    out.push({ type: 'progress', value: Math.min(1, held / GAZE_HOLD_MS) });
-    if (held < GAZE_HOLD_MS) {
+    out.push({ type: 'progress', value: Math.min(1, held / this.holdMs) });
+    if (held < this.holdMs) {
       return;
     }
     const d = dirFromDeg(this.holdYaw);

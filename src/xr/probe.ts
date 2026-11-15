@@ -219,10 +219,10 @@ export class TableProbe {
     }
   }
 
-  /** Picks the surface from what was seen so far and stops sampling. */
-  decide(): TableSurface {
+  /** Picks the surface from what was seen so far and stops sampling. sweepHeight: table top under the hand sweep, if any. */
+  decide(sweepHeight: number | null = null): TableSurface {
     this.active = false;
-    const surface = chooseTable([...this.planes.values()], this.hit, VIRTUAL_TABLE_HEIGHT);
+    const surface = chooseTable([...this.planes.values()], this.hit, VIRTUAL_TABLE_HEIGHT, sweepHeight);
     console.info(
       `[reachfit] table ${surface.source} ${surface.height.toFixed(3)} m (planes ${this.planes.size}, hit ${this.hit ? this.hit.height.toFixed(3) : 'none'})`,
     );

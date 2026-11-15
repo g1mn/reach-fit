@@ -30,7 +30,8 @@ export interface ReachArc {
 export interface TableSurface {
   /** Table top height above the floor, meters. */
   height: number;
-  source: 'plane' | 'hit-test' | 'virtual';
+  /** hand: no plane or hit, so the height of the hand sweep. */
+  source: 'plane' | 'hit-test' | 'hand' | 'virtual';
 }
 
 export interface ReachFitState {
@@ -50,6 +51,8 @@ export interface ReachFitState {
   table: TableSurface | null;
   /** True inside an immersive session. */
   xr: boolean;
+  /** Contrast mode, look time (ms) and mic sensitivity. Absent before the game starts. */
+  access?: { contrast: 'standard' | 'max' | 'dim'; lookMs: number; mic: 'low' | 'medium' | 'high' };
 }
 
 /** t is performance.now() in ms. Tile names follow tileEntityName(). */

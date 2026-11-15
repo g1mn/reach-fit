@@ -6,6 +6,9 @@
  * do not repeat (buttons) need the look to leave and come back. A short
  * dropout (GAZE_GRACE_MS) keeps the timer, so head jitter at an edge does not
  * restart it.
+ *
+ * The Look button changes the look time (setTiming); DWELL_MS and
+ * DWELL_REPEAT_MS are the defaults.
  */
 
 /** Look time before the first action, ms. Design value (task spec). */
@@ -30,6 +33,24 @@ export class DwellTimer {
   private cycleLength = DWELL_MS;
   private armed = true;
   private lastSeen = -1;
+  private dwellMs = DWELL_MS;
+  private repeatMs = DWELL_REPEAT_MS;
+  private holdNextLook = false;
+
+  constructor(dwellMs = DWELL_MS, repeatMs = DWELL_REPEAT_MS) {
+    this.setTiming(dwellMs, repeatMs);
+  }
+
+  /** Look time before the first action and between repeats, ms. Applies from the next look. */
+  setTiming(dwellMs: number, repeatMs: number): void {
+    this.dwellMs = dwellMs;
+    this.repeatMs = repeatMs;
+  }
+
+  /** Look time before the first action, ms. */
+  get lookMs(): number {
+    return this.dwellMs;
+  }
 
   /** Forget the current target (after a board change, for example). */
   reset(): void {
@@ -50,6 +71,17 @@ export class DwellTimer {
       return;
     }
     this.reset();
+  }
+
+  /**
+   * Whatever the look rests on at the next update must not fire until the
+   * look leaves and comes back. Called when the board and panel appear: they
+   * can land under a look that was already resting there (seen in the capture
+   * of 11-15: the look of the sweep fell on 'Set reach again' and restarted
+   * the setup 0.8 s after the board appeared).
+   */
+  holdNext(): void {
+    this.holdNextLook = true;
   }
 
   /**
@@ -74,8 +106,14 @@ export class DwellTimer {
     if (current !== this.target) {
       this.target = current;
       this.cycleStart = t;
-      this.cycleLength = DWELL_MS;
+      this.cycleLength = this.dwellMs;
       this.armed = true;
+    }
+    if (this.holdNextLook) {
+      this.holdNextLook = false;
+      if (current !== null) {
+        this.armed = false;
+      }
     }
     if (current === null || !this.armed) {
       return { target: current, progress: 0, fire: false };
@@ -84,7 +122,7 @@ export class DwellTimer {
     if (elapsed >= this.cycleLength) {
       if (repeats(current)) {
         this.cycleStart = t;
-        this.cycleLength = DWELL_REPEAT_MS;
+        this.cycleLength = this.repeatMs;
       } else {
         this.armed = false;
       }

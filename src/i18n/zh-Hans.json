@@ -42,5 +42,18 @@
   "settings.off": "关",
   "settings.voice": "语音",
   "settings.voiceNone": "无麦克风",
-  "error.generic": "出了点问题。请重新开始本关。"
+  "error.generic": "出了点问题。请重新开始本关。",
+  "settings.contrast": "对比度",
+  "contrast.standard": "标准",
+  "contrast.max": "最强",
+  "contrast.dim": "柔和",
+  "settings.look": "注视时间",
+  "settings.seconds": "{seconds}秒",
+  "settings.mic": "麦克风灵敏度",
+  "mic.low": "低",
+  "mic.medium": "中",
+  "mic.high": "高",
+  "table.hand": "未找到桌面。棋盘放在你的手划过的高度。",
+  "voice.noMic": "没有麦克风。注视操作仍然可用，可在注视时间里调整停留时长。",
+  "page.flatPlay": "没有头显？在这里点击方块，或用方向键和 Enter 来玩。"
 }

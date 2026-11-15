@@ -42,5 +42,18 @@
   "settings.off": "Aus",
   "settings.voice": "Stimme",
   "settings.voiceNone": "Kein Mik",
-  "error.generic": "Etwas ist schiefgelaufen. Starten Sie das Level neu."
+  "error.generic": "Etwas ist schiefgelaufen. Starten Sie das Level neu.",
+  "settings.contrast": "Kontrast",
+  "contrast.standard": "Normal",
+  "contrast.max": "Maximal",
+  "contrast.dim": "Gedämpft",
+  "settings.look": "Blickzeit",
+  "settings.seconds": "{seconds} s",
+  "settings.mic": "Mikro-Empfindlichkeit",
+  "mic.low": "Niedrig",
+  "mic.medium": "Mittel",
+  "mic.high": "Hoch",
+  "table.hand": "Kein Tisch gefunden. Das Brett liegt auf der Höhe Ihrer Hand.",
+  "voice.noMic": "Kein Mikrofon. Blicken funktioniert weiter, und Blickzeit legt fest, wie lange Sie schauen.",
+  "page.flatPlay": "Kein Headset? Hier spielen: Kachel anklicken oder Pfeiltasten und Enter nutzen."
 }

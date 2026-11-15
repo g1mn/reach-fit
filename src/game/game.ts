@@ -24,7 +24,7 @@ import {
   type SolutionTarget,
 } from '../test-api.ts';
 import { updateTheme } from '../theme/index.ts';
-import { DWELL_MS, DWELL_REPEAT_MS } from '../xr/dwell.ts';
+import { lookSeconds, repeatMsFor } from '../xr/access.ts';
 import { createXrLayer, type MessagePart, type XrLayer } from '../xr/layer.ts';
 import { MisGrabTracker, selectMisGrab, shapeMask } from '../xr/misgrab.ts';
 import { readHead } from '../xr/probe.ts';
@@ -144,6 +144,20 @@ export function startGame(world: World): Game {
       wake();
       button(name, input);
     },
+    onAccessChange: () => {
+      // The look time is in the play message ('hold for 0.8 s').
+      if (flow.phase !== 'calibrate') {
+        render();
+      }
+      emitLevel();
+      emitState();
+    },
+    onVoiceChange: (voiceState) => {
+      if (voiceState === 'none') {
+        showNotice([['voice.noMic']], LONG_NOTICE_MS);
+      }
+      emitState();
+    },
     onXrChange: (inXr) => {
       if (inXr) {
         wake();
@@ -191,7 +205,7 @@ export function startGame(world: World): Game {
   // Messages ------------------------------------------------------------------
 
   function playMessage(): MessagePart[] {
-    const seconds = DWELL_MS / 1000;
+    const seconds = lookSeconds(layer.access().lookMs);
     switch (flow.phase) {
       case 'level-done': {
         const best = record.levels[level.id]?.bestRotations;
@@ -439,6 +453,7 @@ export function startGame(world: World): Game {
       reach: layer.reach(),
       table: layer.table(),
       xr: layer.inXr(),
+      access: layer.access(),
     };
   }
 
@@ -495,8 +510,8 @@ export function startGame(world: World): Game {
       solution: solution(),
       targets: layer.targets(),
       buttons: buttonPositions(),
-      dwellMs: DWELL_MS,
-      repeatMs: DWELL_REPEAT_MS,
+      dwellMs: layer.access().lookMs,
+      repeatMs: repeatMsFor(layer.access().lookMs),
     });
   }
 

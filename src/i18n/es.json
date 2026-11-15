@@ -14,7 +14,7 @@
   "reach.done": "El tablero ya se ajusta a tu alcance.",
   "reach.defaultWidth": "Usando el ancho predeterminado.",
   "reach.retry": "No se leyó bien el movimiento. Desliza de nuevo en un solo arco suave.",
-  "reach.redo": "Reconfigurar alcance",
+  "reach.redo": "Rehacer alcance",
   "table.found": "Tablero colocado sobre tu mesa.",
   "table.virtual": "No se encontró mesa. Usando una mesa virtual.",
   "input.pinch": "Pellizca una pieza para girarla.",
@@ -42,5 +42,18 @@
   "settings.off": "Apagado",
   "settings.voice": "Voz",
   "settings.voiceNone": "Sin micro",
-  "error.generic": "Algo salió mal. Reinicia el nivel."
+  "error.generic": "Algo salió mal. Reinicia el nivel.",
+  "settings.contrast": "Contraste",
+  "contrast.standard": "Normal",
+  "contrast.max": "Máximo",
+  "contrast.dim": "Suave",
+  "settings.look": "Mirada",
+  "settings.seconds": "{seconds} s",
+  "settings.mic": "Sensib. del micro",
+  "mic.low": "Baja",
+  "mic.medium": "Media",
+  "mic.high": "Alta",
+  "table.hand": "No se encontró mesa. El tablero queda a la altura de tu mano.",
+  "voice.noMic": "No hay micrófono. Mirar sigue funcionando, y Mirada cambia cuánto mantener la vista.",
+  "page.flatPlay": "¿Sin casco? Juega aquí: haz clic en una pieza o usa las flechas y Enter."
 }

@@ -17,8 +17,15 @@
  *    tile nearest the palm, often the next row. Far pinches, controllers and
  *    the 2D mouse still select through pointerdown.
  *  - Head gaze: a ray from the head; resting it on a turnable tile or a button
- *    for DWELL_MS selects it, with a progress ring. Tiles repeat every
- *    DWELL_REPEAT_MS while the look stays.
+ *    for the look time (0.8 s by default) selects it, with a progress ring.
+ *    Tiles repeat every 1.5 look times while the look stays.
+ *
+ * Access settings (access.ts) sit on the panel's second row, always on show:
+ * Contrast (standard, max, dim), Look time (0.8, 1.2, 2.0, 0.5 s) and Mic
+ * sensitivity (medium, high, low). They are saved in the browser.
+ *
+ * Outside XR (the flat page) the board also plays from the keyboard: arrow
+ * keys move a highlight over the tiles and buttons, Enter or Space acts.
  *
  * The layer never changes the board itself. It reports selects through
  * callbacks and draws whatever board the caller passes (standalone.ts now,
@@ -41,10 +48,22 @@ import {
 } from '@iwsdk/core';
 import { LOCALE_NAMES, type MessageKey } from '../i18n/locales.ts';
 import { getLocale, onLocaleChange, t, type MessageParams } from '../i18n/index.ts';
+import { PALETTES } from '../theme/palette.ts';
+import { setThemeMode } from '../theme/materials.ts';
 import type { PlayLogger } from '../logger.ts';
 import type { Board, InputKind, LightResult } from '../puzzle/types.ts';
 import { tileEntityName, type ReachArc, type TableSurface } from '../test-api.ts';
 import { dirFromDeg, layoutBoard, TILE_SIZE, TILE_VISUAL_RATIO, type BoardLayout } from './arc.ts';
+import {
+  loadAccess,
+  lookSeconds,
+  nextContrast,
+  nextLookMs,
+  nextMic,
+  repeatMsFor,
+  saveAccess,
+  type AccessSettings,
+} from './access.ts';
 import { ReachCalibrator, type CalibrateEvent, type CalibratePhase } from './calibrate.ts';
 import { DwellTimer } from './dwell.ts';
 import { openMic, SoundGate, type Mic } from './voice.ts';
@@ -59,12 +78,13 @@ import {
   type HandPinch,
   type HeadPose,
 } from './probe.ts';
-import { VIRTUAL_TABLE_HEIGHT } from './table.ts';
+import { heightFromSweep, VIRTUAL_TABLE_HEIGHT } from './table.ts';
 import {
+  ACCESS_BUTTONS,
   BUTTON_NAMES,
   ButtonView,
   makeBoardBase,
-  PANEL_H,
+  PANEL_BOTTOM,
   PanelView,
   Reticle,
   TileView,
@@ -86,6 +106,8 @@ const CALIBRATE_PANEL_AHEAD = 0.5;
 const CALIBRATE_PANEL_DROP = 0.28;
 /** Reticle distance along the head ray during gaze calibration, m. Design value. */
 const RETICLE_DISTANCE = 0.6;
+/** Thumb to index tip below this counts as pinching for the button guard, m. Design value. */
+const PINCH_GUARD_GAP = 0.03;
 /** Height of the invisible near-pinch box over each tile, m. Design value. */
 const GRIP_HEIGHT = 0.03;
 
@@ -108,6 +130,10 @@ export interface XrLayerCallbacks {
   /** A reach arc and a table were chosen. Call showBoard after this. */
   onReachSet?: (arc: ReachArc, table: TableSurface) => void;
   onXrChange?: (inXr: boolean) => void;
+  /** Contrast, look time or mic sensitivity changed (already applied and saved). */
+  onAccessChange?: (settings: AccessSettings) => void;
+  /** Voice turned on or off, or no microphone could be opened ('none'). */
+  onVoiceChange?: (state: 'off' | 'on' | 'none') => void;
 }
 
 export interface XrLayerOptions extends XrLayerCallbacks {
@@ -120,8 +146,10 @@ export interface XrLayer {
   inXr(): boolean;
   reach(): ReachArc | null;
   table(): TableSurface | null;
-  /** Input methods on right now. Pinch and gaze always; controller when one is connected. */
+  /** Input methods on right now. Pinch and gaze always; controller when one is connected; keyboard outside XR. */
   inputs(): InputKind[];
+  /** Access settings in use. */
+  access(): AccessSettings;
   /** Draws a board on the reach arc, replacing the previous one. */
   showBoard(board: Board, light?: LightResult): void;
   /** Updates rotations (animated) and lit paths of the board on show. */
@@ -167,9 +195,11 @@ interface ButtonEntry {
 export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
   const { logger } = options;
   const scene = world.scene;
+  let access: AccessSettings = loadAccess();
   const calibrator = new ReachCalibrator();
+  calibrator.holdMs = access.lookMs;
   const probe = new TableProbe();
-  const dwell = new DwellTimer();
+  const dwell = new DwellTimer(access.lookMs, repeatMsFor(access.lookMs));
   const raycaster = new Raycaster();
   raycaster.far = GAZE_MAX_DISTANCE;
 
@@ -182,7 +212,11 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
   /** Voice confirm: 'off' until the button is pressed, 'none' when no microphone could be opened. */
   let voice: 'off' | 'on' | 'none' = 'off';
   let mic: Mic | null = null;
-  const soundGate = new SoundGate();
+  const soundGate = new SoundGate(access.mic);
+  /** Fingertip heights of this calibration's hand samples (table height when nothing else is found). */
+  let sweepYs: number[] = [];
+  /** Keyboard highlight outside XR: a tile or button name. */
+  let keyFocus: string | null = null;
   let messageParts: MessagePart[] = [];
   let statusParts: MessagePart[] = [];
   let lastGazeTarget: string | null = null;
@@ -208,25 +242,39 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
   const panelEntity = world.createTransformEntity(panel.root, { persistent: true });
   panel.root.rotation.order = 'YXZ';
   const buttons = new Map<ButtonName, ButtonEntry>();
-  BUTTON_NAMES.forEach((name, i) => {
-    const view = new ButtonView(name);
-    const slot = panel.buttonSlot(i, BUTTON_NAMES.length);
+  BUTTON_NAMES.forEach((name) => {
+    const slot = panel.slot(name);
+    const view = new ButtonView(name, slot.width);
     view.root.position.set(slot.x, slot.y, slot.z);
     const entity = world.createTransformEntity(view.root, { parent: panelEntity });
     entity.addComponent(RayInteractable);
-    entity.addComponent(PokeInteractable);
+    // The settings row sits right behind the far row of tiles, so a finger
+    // reaching for a far tile can touch it (11-15 capture: Look time changed
+    // during a pinch). Settings take a ray pinch, a look, a sound or a key
+    // instead of a touch. The first row keeps the touch press.
+    if (!ACCESS_BUTTONS.includes(name)) {
+      entity.addComponent(PokeInteractable);
+    }
     const entry: ButtonEntry = { view, entity, visible: true, pointerHover: 0, lastPress: -Infinity };
-    view.root.addEventListener('pointerdown', () => pressButton(name, pointerKind()));
+    view.root.addEventListener('pointerdown', () => {
+      // A pinch on a tile can also reach a button (its ray, or a brush against
+      // the panel). Seen in the 11-15 capture: a far-row pinch changed Look time.
+      if (handOverTile()) {
+        return;
+      }
+      pressButton(name, pointerKind());
+    });
     view.root.addEventListener('pointerenter', () => {
       entry.pointerHover++;
       view.setHover(true);
     });
     view.root.addEventListener('pointerleave', () => {
       entry.pointerHover = Math.max(0, entry.pointerHover - 1);
-      view.setHover(entry.pointerHover > 0 || lastGazeTarget === name);
+      view.setHover(entry.pointerHover > 0 || lastGazeTarget === name || keyFocus === name);
     });
     buttons.set(name, entry);
   });
+  applyContrast();
 
   // Calibration helpers.
   const trail = new Trail();
@@ -256,6 +304,32 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
       ?.view.setLabel(
         `${t('settings.voice')}: ${voice === 'on' ? t('settings.on') : voice === 'none' ? t('settings.voiceNone') : t('settings.off')}`,
       );
+    buttons.get('Btn_Contrast')?.view.setLabel(`${t('settings.contrast')}: ${t(`contrast.${access.contrast}`)}`);
+    buttons
+      .get('Btn_Look')
+      ?.view.setLabel(`${t('settings.look')}: ${t('settings.seconds', { seconds: lookSeconds(access.lookMs) })}`);
+    buttons.get('Btn_Mic')?.view.setLabel(`${t('settings.mic')}: ${t(`mic.${access.mic}`)}`);
+  }
+
+  function applyContrast(): void {
+    const colors = PALETTES[access.contrast];
+    setThemeMode(access.contrast);
+    panel.setColors(colors);
+    for (const b of buttons.values()) {
+      b.view.setColors(colors);
+    }
+  }
+
+  /** Applies, saves and reports a change from the access row. */
+  function changeAccess(next: AccessSettings): void {
+    access = next;
+    applyContrast();
+    dwell.setTiming(access.lookMs, repeatMsFor(access.lookMs));
+    calibrator.holdMs = access.lookMs;
+    soundGate.setLevel(access.mic);
+    saveAccess(access);
+    render();
+    options.onAccessChange?.(access);
   }
   const offLocale = onLocaleChange(render);
 
@@ -281,6 +355,15 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
     if (name === 'Btn_Voice') {
       toggleVoice();
     }
+    if (name === 'Btn_Contrast') {
+      changeAccess({ ...access, contrast: nextContrast(access.contrast) });
+    }
+    if (name === 'Btn_Look') {
+      changeAccess({ ...access, lookMs: nextLookMs(access.lookMs) });
+    }
+    if (name === 'Btn_Mic') {
+      changeAccess({ ...access, mic: nextMic(access.mic) });
+    }
     if (input === 'voice') {
       dwell.holdIfOn(name);
     }
@@ -292,7 +375,9 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
       mic?.stop();
       mic = null;
       voice = 'off';
+      buttons.get('Btn_Mic')?.view.setMeter(null);
       render();
+      options.onVoiceChange?.(voice);
       return;
     }
     // Asked from a press, so the browser's permission prompt has a reason to show.
@@ -304,6 +389,7 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
       mic = opened;
       voice = opened ? 'on' : 'none';
       render();
+      options.onVoiceChange?.(voice);
     });
   }
 
@@ -324,6 +410,16 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
 
   function pinchPick(point: Vec3): PinchPick | null {
     return arc && layout ? pickByPinch(point, layout.cells, arc.center[1]) : null;
+  }
+
+  /**
+   * True while a tracked hand is pinching right over a tile: the pinch is for
+   * the tile, so a button press that comes with it (the hand's ray or a brush
+   * against the panel) is not a choice. A finger pointing at a button is not
+   * pinching (thumb away from the index tip), so a deliberate press still works.
+   */
+  function handOverTile(): boolean {
+    return pinches.some((h) => h.gap < PINCH_GUARD_GAP && pinchPick(h)?.cell != null);
   }
 
   /** pointerdown on a tile or its grip. */
@@ -399,9 +495,10 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
   function placePanelOnArc(a: ReachArc, lay: BoardLayout): void {
     const d = dirFromDeg(lay.midDeg);
     const r = lay.rowRadii[0] + TILE_SIZE / 2 + PANEL_GAP;
+    // Lift so the lowest edge of the tilted plate stays 2 cm over the table.
     panel.root.position.set(
       a.center[0] + d.x * r,
-      a.center[1] + PANEL_H / 2 + 0.02,
+      a.center[1] - PANEL_BOTTOM * Math.cos(PANEL_TILT_RAD) + 0.02,
       a.center[2] + d.z * r,
     );
     panel.root.rotation.set(PANEL_TILT_RAD, (lay.midDeg * Math.PI) / 180, 0);
@@ -411,11 +508,15 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
     phase = 'calibrate';
     arc = null;
     calibrator.restart();
+    sweepYs = [];
     trail.clear();
     clearBoard();
     lastGazeTarget = null;
     for (const name of BUTTON_NAMES) {
-      setButtonVisible(name, name === 'Btn_Language' || name === 'Btn_Sound' || name === 'Btn_Voice');
+      setButtonVisible(
+        name,
+        name === 'Btn_Language' || name === 'Btn_Sound' || name === 'Btn_Voice' || ACCESS_BUTTONS.includes(name),
+      );
     }
     if (xr) {
       probe.start(world);
@@ -436,17 +537,21 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
   }
 
   function finishCalibration(chosen: ReachArc): void {
-    table = table && !xr ? table : xr ? probe.decide() : { height: VIRTUAL_TABLE_HEIGHT, source: 'virtual' };
+    const sweepHeight = chosen.source === 'hand' ? heightFromSweep(sweepYs) : null;
+    table =
+      table && !xr ? table : xr ? probe.decide(sweepHeight) : { height: VIRTUAL_TABLE_HEIGHT, source: 'virtual' };
     arc = { ...chosen, center: [chosen.center[0], table.height, chosen.center[2]] };
     logger.push({ type: 'table', surface: table });
     logger.push({ type: 'reach-set', arc });
     phase = 'ready';
+    // The panel and board appear now, maybe right under a resting look: that look must not press anything.
+    dwell.holdNext();
     reticle.mesh.visible = false;
     setButtonVisible('Btn_Reach', true);
     setButtonVisible('Btn_Restart', true);
     messageParts = [
       [arc.source === 'default' ? 'reach.defaultWidth' : 'reach.done'],
-      [table.source === 'virtual' ? 'table.virtual' : 'table.found'],
+      [table.source === 'virtual' ? 'table.virtual' : table.source === 'hand' ? 'table.hand' : 'table.found'],
     ];
     render();
     options.onReachSet?.(arc, table);
@@ -470,6 +575,7 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
           logger.push({ type: 'reach-sample', x: e.x, y: e.y, z: e.z, source: e.source });
           if (e.source === 'hand') {
             trail.add(e.x, e.y, e.z);
+            sweepYs.push(e.y);
           }
           break;
         case 'rejected':
@@ -541,7 +647,12 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
       lastGazeTarget = state.target;
     }
     // A sound while the look rests on a target fires it now, without waiting out the hold.
-    const sound = mic !== null && soundGate.update(mic.level(), now);
+    let sound = false;
+    if (mic) {
+      const level = mic.level();
+      sound = soundGate.update(level, now);
+      buttons.get('Btn_Mic')?.view.setMeter(sound ? 1 : soundGate.meter(level));
+    }
     if (state.target) {
       setTargetGaze(state.target, state.progress, true);
       if (sound && !state.fire) {
@@ -568,14 +679,101 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
     const tile = tiles.get(name);
     if (tile) {
       tile.view.setGazeProgress(progress);
-      tile.view.setHover(looking || tile.pointerHover > 0);
+      tile.view.setHover(looking || tile.pointerHover > 0 || keyFocus === name);
       return;
     }
     const b = buttons.get(name as ButtonName);
     if (b) {
       b.view.setGazeProgress(progress);
-      b.view.setHover(looking || b.pointerHover > 0);
+      b.view.setHover(looking || b.pointerHover > 0 || keyFocus === name);
     }
+  }
+
+  // Keyboard on the flat page ------------------------------------------------
+
+  /** Tiles that turn (row by row), then the buttons on show. */
+  function keyTargets(): string[] {
+    const list: string[] = [];
+    for (const [name, tile] of tiles) {
+      if (tile.rotatable) {
+        list.push(name);
+      }
+    }
+    for (const [name, b] of buttons) {
+      if (b.visible) {
+        list.push(name);
+      }
+    }
+    return list;
+  }
+
+  function showKeyFocus(name: string | null, on: boolean): void {
+    if (!name) {
+      return;
+    }
+    const tile = tiles.get(name);
+    if (tile) {
+      tile.view.setHover(on || tile.pointerHover > 0 || lastGazeTarget === name);
+      return;
+    }
+    const b = buttons.get(name as ButtonName);
+    b?.view.setHover(on || (b?.pointerHover ?? 0) > 0 || lastGazeTarget === name);
+  }
+
+  function moveKeyFocus(step: number): void {
+    const list = keyTargets();
+    if (list.length === 0) {
+      return;
+    }
+    const at = keyFocus ? list.indexOf(keyFocus) : -1;
+    const next = at < 0 ? (step > 0 ? 0 : list.length - 1) : (at + step + list.length) % list.length;
+    showKeyFocus(keyFocus, false);
+    keyFocus = list[next];
+    showKeyFocus(keyFocus, true);
+  }
+
+  function onKeyDown(event: KeyboardEvent): void {
+    if (disposed || xr || phase !== 'ready' || event.altKey || event.ctrlKey || event.metaKey) {
+      return;
+    }
+    const el = event.target as { tagName?: string } | null;
+    // Keys on the page's own buttons and fields stay theirs.
+    if (el?.tagName && /^(BUTTON|INPUT|SELECT|TEXTAREA|A)$/.test(el.tagName)) {
+      return;
+    }
+    switch (event.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        moveKeyFocus(1);
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        moveKeyFocus(-1);
+        break;
+      case 'Enter':
+      case ' ': {
+        if (!keyFocus || !keyTargets().includes(keyFocus)) {
+          moveKeyFocus(1);
+          break;
+        }
+        if (tiles.has(keyFocus)) {
+          selectTile(keyFocus, 'keyboard');
+        } else {
+          pressButton(keyFocus as ButtonName, 'keyboard');
+        }
+        break;
+      }
+      case 'Escape':
+        showKeyFocus(keyFocus, false);
+        keyFocus = null;
+        break;
+      default:
+        return;
+    }
+    event.preventDefault();
+  }
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', onKeyDown);
   }
 
   let lastTick = performance.now();
@@ -620,7 +818,10 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
         tableY: VIRTUAL_TABLE_HEIGHT,
       });
       handleCalibrateEvents(events, head);
-    } else if (phase === 'ready') {
+    } else if (phase === 'ready' && xr) {
+      // Head gaze only inside XR. On the flat page the camera does not move,
+      // so a look would rest on whatever sits in the middle of the screen
+      // (with two button rows that can be a button) and press it.
       updateGaze(head, now);
     }
     pinches = xr && phase === 'ready' ? readPinchPoints(world) : [];
@@ -704,7 +905,7 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
         });
         target.addEventListener('pointerleave', () => {
           entry.pointerHover = Math.max(0, entry.pointerHover - 1);
-          view.setHover(entry.pointerHover > 0 || lastGazeTarget === name);
+          view.setHover(entry.pointerHover > 0 || lastGazeTarget === name || keyFocus === name);
         });
       }
       grip.addEventListener('pointerenter', () => {
@@ -718,6 +919,15 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
     placePanelOnArc(arc, layout);
     if (light) {
       updateBoard(board, light);
+    }
+    if (keyFocus && /^Tile_/.test(keyFocus)) {
+      // Keep the keyboard highlight on the same cell of the new board, if it turns.
+      const tile = tiles.get(keyFocus);
+      if (tile?.rotatable) {
+        tile.view.setHover(true);
+      } else {
+        keyFocus = null;
+      }
     }
   }
 
@@ -755,8 +965,12 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
       if (controllersPresent(world) || !world.session) {
         list.push('controller');
       }
+      if (!world.session) {
+        list.push('keyboard');
+      }
       return list;
     },
+    access: () => ({ ...access }),
     showBoard,
     updateBoard,
     hideBoard: clearBoard,
@@ -785,6 +999,9 @@ export function createXrLayer(world: World, options: XrLayerOptions): XrLayer {
     targets: () => [...tiles.keys()],
     dispose: () => {
       disposed = true;
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('keydown', onKeyDown);
+      }
       mic?.stop();
       mic = null;
       listenSession(null);

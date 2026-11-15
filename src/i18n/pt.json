@@ -42,5 +42,18 @@
   "settings.off": "Desligado",
   "settings.voice": "Voz",
   "settings.voiceNone": "Sem mic",
-  "error.generic": "Algo deu errado. Reinicie o nível."
+  "error.generic": "Algo deu errado. Reinicie o nível.",
+  "settings.contrast": "Contraste",
+  "contrast.standard": "Padrão",
+  "contrast.max": "Máximo",
+  "contrast.dim": "Suave",
+  "settings.look": "Tempo do olhar",
+  "settings.seconds": "{seconds} s",
+  "settings.mic": "Sensib. do microfone",
+  "mic.low": "Baixa",
+  "mic.medium": "Média",
+  "mic.high": "Alta",
+  "table.hand": "Nenhuma mesa encontrada. O tabuleiro fica na altura da sua mão.",
+  "voice.noMic": "Sem microfone. Olhar continua funcionando, e Tempo do olhar define quanto manter.",
+  "page.flatPlay": "Sem headset? Jogue aqui: clique em uma peça ou use as setas e Enter."
 }

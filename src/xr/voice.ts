@@ -7,12 +7,27 @@
  * Audio is measured as loudness only and is never stored or sent anywhere.
  *
  * SoundGate is pure, so Node tests drive it with synthetic loudness values.
+ *
+ * The Mic button picks one of three levels (SOUND_LEVELS): high hears a soft
+ * voice in a quiet room, low ignores a cough or a TV in a loud one. meter()
+ * gives the share of the trigger level for the bar on the Mic button, so a
+ * player can see whether a sound would count before using it on a tile.
  */
+import type { MicLevel } from './access.ts';
 
-/** Loudness must beat the room noise by this factor. Design value. */
-export const SOUND_RATIO = 3;
-/** And be at least this loud (RMS, 0 to 1), so a silent room does not trigger on hiss. Design value. */
-export const SOUND_MIN_RMS = 0.04;
+/**
+ * Per Mic level: loudness must beat the room noise by `ratio` and be at
+ * least `minRms` (RMS, 0 to 1), so a silent room does not trigger on hiss.
+ * Design value.
+ */
+export const SOUND_LEVELS: Readonly<Record<MicLevel, { ratio: number; minRms: number }>> = {
+  high: { ratio: 2, minRms: 0.02 },
+  medium: { ratio: 3, minRms: 0.04 },
+  low: { ratio: 4, minRms: 0.08 },
+};
+/** Medium, the default. */
+export const SOUND_RATIO = SOUND_LEVELS.medium.ratio;
+export const SOUND_MIN_RMS = SOUND_LEVELS.medium.minRms;
 /** Dead time after a trigger, ms. One word must not fire twice. Design value. */
 export const SOUND_REFRACTORY_MS = 700;
 /** Room noise estimate rises slowly and falls quickly. Rates per update. Design value. */
@@ -26,6 +41,28 @@ export class SoundGate {
   private lastFire = -Infinity;
   private loudSince = -1;
   private armed = true;
+  private ratio = SOUND_RATIO;
+  private minRms = SOUND_MIN_RMS;
+
+  constructor(level: MicLevel = 'medium') {
+    this.setLevel(level);
+  }
+
+  /** Mic sensitivity. The room noise estimate is kept. */
+  setLevel(level: MicLevel): void {
+    this.ratio = SOUND_LEVELS[level].ratio;
+    this.minRms = SOUND_LEVELS[level].minRms;
+  }
+
+  /** Loudness a sound needs right now. */
+  get threshold(): number {
+    return Math.max(this.minRms, this.noise * this.ratio);
+  }
+
+  /** rms as a share of the trigger level, 0 to 1 (1 means it would count). */
+  meter(rms: number): number {
+    return Math.max(0, Math.min(1, rms / this.threshold));
+  }
 
   /** Room noise estimate, for tests and the status line. */
   get floor(): number {
@@ -34,7 +71,7 @@ export class SoundGate {
 
   /** Feed one loudness reading. True on the update where a sound counts. */
   update(rms: number, t: number): boolean {
-    const loud = rms >= SOUND_MIN_RMS && rms >= this.noise * SOUND_RATIO;
+    const loud = rms >= this.minRms && rms >= this.noise * this.ratio;
     if (!loud) {
       this.noise += (rms - this.noise) * (rms < this.noise ? NOISE_DOWN : NOISE_UP);
       this.loudSince = -1;

@@ -42,5 +42,18 @@
   "settings.off": "끔",
   "settings.voice": "음성",
   "settings.voiceNone": "마이크 없음",
-  "error.generic": "문제가 생겼어요. 이 단계를 다시 시작해 주세요."
+  "error.generic": "문제가 생겼어요. 이 단계를 다시 시작해 주세요.",
+  "settings.contrast": "대비",
+  "contrast.standard": "기본",
+  "contrast.max": "최대",
+  "contrast.dim": "어둡게",
+  "settings.look": "응시 시간",
+  "settings.seconds": "{seconds}초",
+  "settings.mic": "마이크 감도",
+  "mic.low": "낮음",
+  "mic.medium": "보통",
+  "mic.high": "높음",
+  "table.hand": "책상을 찾지 못했어요. 손으로 쓸어 준 높이에 판을 놓을게요.",
+  "voice.noMic": "마이크가 없어요. 바라보기는 그대로 돼요. 응시 시간에서 바라보는 시간을 바꿀 수 있어요.",
+  "page.flatPlay": "헤드셋이 없나요? 여기서 타일을 클릭하거나 화살표 키와 Enter로 플레이하세요."
 }

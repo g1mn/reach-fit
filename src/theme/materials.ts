@@ -9,9 +9,20 @@
  * updateTheme(dtMs) drives the slow pulse on lit cores and lit targets by
  * changing two shared colors in place. Call it once per frame. It allocates
  * nothing.
+ *
+ * setThemeMode(mode) recolors every shared material in place (the Contrast
+ * button), so tiles already on the board change at once.
  */
 import { Color, DoubleSide, MeshBasicMaterial, type Texture } from 'three';
-import { PALETTE, pulseGain, PULSE_PERIOD_MS, type PaletteKey } from './palette.ts';
+import {
+  PALETTE,
+  PALETTES,
+  PULSE_BY_MODE,
+  pulseGain,
+  PULSE_PERIOD_MS,
+  type ContrastMode,
+  type PaletteKey,
+} from './palette.ts';
 import { createBoardTexture, createFaceTexture } from './textures.ts';
 
 export interface ThemeMaterials {
@@ -42,6 +53,25 @@ export interface ThemeMaterials {
   gazeCasing: MeshBasicMaterial;
   hover: MeshBasicMaterial;
 }
+
+/** Palette key of each shared material. */
+const MATERIAL_KEYS: Readonly<Record<keyof ThemeMaterials, PaletteKey>> = {
+  pad: 'board',
+  base: 'board',
+  face: 'tileFace',
+  block: 'block',
+  side: 'pathIdle',
+  pathIdle: 'pathIdle',
+  pathLit: 'pathLit',
+  source: 'source',
+  targetRing: 'target',
+  targetLit: 'target',
+  gazeRing: 'gazeRing',
+  gazeCasing: 'tileFace',
+  hover: 'hover',
+};
+
+let mode: ContrastMode = 'standard';
 
 interface ThemeState {
   materials: ThemeMaterials;
@@ -89,13 +119,37 @@ function create(): ThemeState {
     hover: basic('hover', undefined, true),
   };
   materials.base.side = DoubleSide;
-  return {
+  const created: ThemeState = {
     materials,
     textures: [faceTex, boardTex],
     baseLit: materials.pathLit.color.clone(),
     baseTarget: materials.targetLit.color.clone(),
     elapsedMs: 0,
   };
+  recolor(created);
+  return created;
+}
+
+function recolor(s: ThemeState): void {
+  const palette = PALETTES[mode];
+  for (const [name, key] of Object.entries(MATERIAL_KEYS) as [keyof ThemeMaterials, PaletteKey][]) {
+    s.materials[name].color.set(palette[key]);
+  }
+  s.baseLit.copy(s.materials.pathLit.color);
+  s.baseTarget.copy(s.materials.targetLit.color);
+}
+
+/** Contrast mode now on. */
+export function getThemeMode(): ContrastMode {
+  return mode;
+}
+
+/** Recolors every shared material for a contrast mode. Safe before the first tile exists. */
+export function setThemeMode(next: ContrastMode): void {
+  mode = next;
+  if (state) {
+    recolor(state);
+  }
 }
 
 export function getThemeMaterials(): ThemeMaterials {
@@ -111,7 +165,7 @@ export function updateTheme(dtMs: number): void {
     return;
   }
   state.elapsedMs = (state.elapsedMs + dtMs) % PULSE_PERIOD_MS;
-  const g = pulseGain(state.elapsedMs);
+  const g = PULSE_BY_MODE[mode] ? pulseGain(state.elapsedMs) : 1;
   state.materials.pathLit.color.copy(state.baseLit).multiplyScalar(g);
   state.materials.targetLit.color.copy(state.baseTarget).multiplyScalar(g);
 }

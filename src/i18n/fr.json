@@ -14,7 +14,7 @@
   "reach.done": "Le plateau suit désormais votre portée.",
   "reach.defaultWidth": "Utilisation de la largeur par défaut.",
   "reach.retry": "Le balayage était difficile à lire. Refaites-le en un seul arc fluide.",
-  "reach.redo": "Reconfigurer la portée",
+  "reach.redo": "Refaire la portée",
   "table.found": "Plateau placé sur votre table.",
   "table.virtual": "Aucune table trouvée. Utilisation d'une table virtuelle.",
   "input.pinch": "Pincez une tuile pour la tourner.",
@@ -42,5 +42,18 @@
   "settings.off": "Désactivé",
   "settings.voice": "Voix",
   "settings.voiceNone": "Pas de micro",
-  "error.generic": "Une erreur s’est produite. Rejouez le niveau."
+  "error.generic": "Une erreur s’est produite. Rejouez le niveau.",
+  "settings.contrast": "Contraste",
+  "contrast.standard": "Normal",
+  "contrast.max": "Maximal",
+  "contrast.dim": "Doux",
+  "settings.look": "Durée du regard",
+  "settings.seconds": "{seconds} s",
+  "settings.mic": "Sensibilité micro",
+  "mic.low": "Basse",
+  "mic.medium": "Moyenne",
+  "mic.high": "Haute",
+  "table.hand": "Aucune table trouvée. Le plateau se place à la hauteur de votre main.",
+  "voice.noMic": "Pas de micro. Le regard fonctionne toujours, et Durée du regard règle le temps de maintien.",
+  "page.flatPlay": "Pas de casque ? Jouez ici : cliquez sur une tuile, ou utilisez les flèches et Entrée."
 }
